@@ -1,0 +1,10 @@
+[Main]
+
+[Info]
+name = "uwutils"
+version = "0.0.0"
+
+[Download]
+files = ["throw.hpp","result.hpp","concepts.hpp","either.hpp","error.hpp","keeper.hpp","dynamic.hpp","box.hpp"]
+dependencies = []
+
