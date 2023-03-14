@@ -14,7 +14,7 @@ public:
 
     Box(const Box<_Tp>& b) {
         if(b.has_dyn) {
-            dyn = b.dyn.as<_Tp>();
+            dyn = b.dyn.copy<_Tp>();
             has_dyn = true;
         } 
     }
@@ -26,6 +26,16 @@ public:
         clear();
         dyn = t;
         has_dyn = true;
+        return *this;
+    }
+
+    template<typename _Tpr>
+    Box<_Tp>& operator=(const Box<_Tp>& b) {
+        clear();
+        if(b.has()) {
+            dyn = b.dyn.copy<_Tp>();
+            has_dyn = true;
+        }
         return *this;
     }
 

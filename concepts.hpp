@@ -30,6 +30,10 @@ concept CopyAble = requires(_Tp t) {
 template<typename _Tp, typename _Tpr>
 concept ThisType = std::is_same<_Tp,_Tpr>::value;
 
+template<typename _Tp, typename _Tpr>
+concept Not = std::negation<std::is_same<_Tp,_Tpr>>::value;
+
+
 template<typename _Tpr, typename _Tp1, typename _Tp2>
 concept EitherType = requires {
     typeid(_Tpr) == typeid(_Tp1) || typeid(_Tpr) == typeid(_Tp2);

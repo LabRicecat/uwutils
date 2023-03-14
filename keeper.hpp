@@ -22,6 +22,18 @@ public:
         ++_s[_p];
     }
 
+    Keeper& operator=(_Tp* t) {
+        --_s[_p];
+        if(_s[_p] == 0) {
+            _s.erase(_p);
+            delete _p;
+            _p = nullptr;
+        }
+        _p = t;
+        ++_s[_p];
+        return *this;
+    }
+
     ~Keeper() {
         --_s[_p];
         if(_s[_p] == 0) {
