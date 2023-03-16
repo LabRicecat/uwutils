@@ -5,6 +5,6 @@ name = "uwutils"
 version = "0.0.0"
 
 [Download]
-files = ["throw.hpp","result.hpp","concepts.hpp","either.hpp","error.hpp","keeper.hpp","dynamic.hpp","box.hpp"]
+files = ["abs.hpp","borrow.hpp","box.hpp","concepts.hpp","dynamic.hpp","either.hpp","error.hpp","functional.hpp","keeper.hpp","lifetime.hpp","own.hpp","result.hpp","share.hpp","throw.hpp"]
 dependencies = []
 

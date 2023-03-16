@@ -22,6 +22,11 @@ concept SelfAsignable = requires(_Tp t) {
     t = t;
 };
 
+template<typename _Tp,typename _Tpr>
+concept AssignAble_w = requires(_Tp t, _Tpr tr) {
+    t = tr;
+};
+
 template<typename _Tp>
 concept CopyAble = requires(_Tp t) {
     _Tp(t);
@@ -32,7 +37,6 @@ concept ThisType = std::is_same<_Tp,_Tpr>::value;
 
 template<typename _Tp, typename _Tpr>
 concept Not = std::negation<std::is_same<_Tp,_Tpr>>::value;
-
 
 template<typename _Tpr, typename _Tp1, typename _Tp2>
 concept EitherType = requires {
@@ -75,6 +79,30 @@ concept Ord_w = requires(_Tp t, _Tpr tr) {
     tr <= t;
     tr != t;
 };
+
+template<typename _Tp>
+concept CallAble = requires(_Tp t) {
+    t();
+};
+
+template<typename _Tp, typename ..._Tpr>
+concept CallAble_w = requires(_Tp t, _Tpr... r) {
+    t(r...);
+};
+
+template<typename _Tp>
+concept IteratAble = requires(_Tp t, int n) {
+    t.begin() + n;
+    t.end() + n;
+};
+
+template<typename _Tp>
+concept IndexAble = requires(_Tp t, int n) {
+    t[n];
+};
+
+template<typename _Tp>
+using ElementOf = decltype(_Tp()[0]);
 
 }
 

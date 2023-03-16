@@ -6,20 +6,39 @@
 
 namespace uwutils {
 
+// class that loses permission to change it's value once it gets passed
 template<CopyAble _Tp>
 class Borrow {
     _Tp source;
     bool assignable = false;
 public:
-    Borrow(const _Tp& p) {
-        source = p;
+    Borrow(Borrow&& p) 
+    : source(p) {
+        assignable = false;
+    }
+
+    Borrow(const _Tp& p) 
+    : source(p) {
         assignable = true;
     }
 
-    Borrow(const Borrow<_Tp>& b) {
+    Borrow(const Borrow<_Tp>& b) 
+    : source(_Tp(b.source)) {
         assignable = false;
-        source = _Tp(b.source);
-    } 
+    }
+
+    template<Not<Borrow<_Tp>> _Tpr>
+    Borrow(const _Tpr& p) requires AssignAble_w<_Tp,_Tpr> 
+    : source(p) {
+        assignable = true;
+    }
+
+    template<Not<Borrow<_Tp>> _Tpr>
+    Borrow<_Tp>& operator=(const _Tpr& p) requires AssignAble_w<_Tp,_Tpr> {
+        if(assignable) source = p;
+        else throw MessageException("Assign to unowned object");
+        return *this;
+    }
 
     Borrow<_Tp>& operator=(const _Tp& p) {
         if(assignable) source = p;
@@ -33,27 +52,27 @@ public:
         return *this;
     } 
 
-    operator const _Tp() { return source; }
+    Borrow<_Tp>& operator=(Borrow<_Tp>&& b) {
+        assignable = false;
+        source = b;
+        return *this;
+    } 
+
+    operator const _Tp&() { return source; }
 
     _Tp& ref() {
         if(assignable) return source;
         throw MessageException("Reference request to unowned object");
     }
+
+    const _Tp& view() { return source; }
+
+    Borrow<int>& lose() {
+        assignable = false;
+        return *this;
+    }
 };
 
 }
-
-/*
-
-foo(Borrow<int> b) {
-    b = 3; // error
-}
-
-Borrow<int> b;
-b = 4; // valid
-foo(b); // error
-b = 2; // valid
-
-*/
 
 #endif

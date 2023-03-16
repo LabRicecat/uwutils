@@ -6,6 +6,7 @@
 
 namespace uwutils {
 
+// class able to hold two different values
 template<typename _Tp1, typename _Tp2>
 class Either {
     size_t _idx = 0;

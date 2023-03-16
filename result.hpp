@@ -8,6 +8,7 @@
 
 namespace uwutils {
 
+// class that possibly stores a result
 template<typename _Tp>
 class Result {
     Box<_Tp> val;
@@ -16,6 +17,11 @@ public:
     const static Result<_Tp> fail;
     
     Result() {}
+    template<AssignAble_w<_Tp> _Tpr> 
+    Result(const _Tpr& v) {
+        val = (_Tp)v;
+        unset = false;
+    }
     Result(const _Tp& v) { 
         val = v; 
         unset = false; 

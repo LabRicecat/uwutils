@@ -14,6 +14,7 @@ public:
     :MessageException(msg), DataException<_Terr>(err) {}
 };
 
+// error return wrapper class
 template<typename _Tp, ErrorEnum _Terr>
 class Error {
     Box<_Tp> val;

@@ -5,6 +5,7 @@
 
 namespace uwutils {
 
+// class to add a "NULL" option to it's value
 template<typename _Tp>
 class Box {
     Dynamic dyn;
@@ -22,6 +23,13 @@ public:
     Box(const _Tp& t): dyn(t) { has_dyn = true; }
     Box():dyn() {}
 
+    template<Not<Box<_Tp>> _Tpr>
+    Box(const _Tpr& t) requires Not<_Tp,_Tpr> && AssignAble_w<_Tp,_Tpr>
+    : dyn(new _Tp(t)) {
+        dyn.as<_Tp>() = t;
+        has_dyn = true;
+    }
+
     Box<_Tp>& operator=(const _Tp& t) {
         clear();
         dyn = t;
@@ -29,8 +37,9 @@ public:
         return *this;
     }
 
-    template<typename _Tpr>
+    template<Not<_Tp> _Tpr>
     Box<_Tp>& operator=(const Box<_Tp>& b) {
+        std::cout << "bxcpy\n";
         clear();
         if(b.has()) {
             dyn = b.dyn.copy<_Tp>();

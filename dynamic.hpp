@@ -6,6 +6,7 @@
 
 namespace uwutils {
 
+// class able to hold any value
 class Dynamic {
     void* _v = nullptr;
     unsigned long long _size = sizeof(char);
