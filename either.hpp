@@ -35,12 +35,12 @@ public:
     }
 
     template<ThisType<_Tp1> _Tpr>
-    _Tp1& get() {
+    _Tp1& get() uwunsafe {
         if(_idx == 0) return dyn.as<_Tp1>();
         else throw MessageException("Not set!");
     }
     template<ThisType<_Tp2> _Tpr>
-    _Tp2& get() {
+    _Tp2& get() uwunsafe {
         if(_idx == 1) return dyn.as<_Tp2>();
         else throw MessageException("Not set!");
     }

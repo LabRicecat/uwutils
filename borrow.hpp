@@ -3,12 +3,13 @@
 
 #include "concepts.hpp"
 #include "throw.hpp"
+#include "interface.hpp"
 
 namespace uwutils {
 
 // class that loses permission to change it's value once it gets passed
 template<CopyAble _Tp>
-class Borrow {
+class Borrow : public IContainer<_Tp> {
     _Tp source;
     bool assignable = false;
 public:
@@ -60,12 +61,12 @@ public:
 
     operator const _Tp&() { return source; }
 
-    _Tp& ref() {
+    _Tp& ref() uwunsafe {
         if(assignable) return source;
         throw MessageException("Reference request to unowned object");
     }
 
-    const _Tp& view() { return source; }
+    const _Tp& view() const override { return source; }
 
     Borrow<int>& lose() {
         assignable = false;

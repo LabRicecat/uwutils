@@ -32,7 +32,7 @@ public:
             return Status::ERR;
         return val.unwrap();
     }
-    _Tp get_or(const _Tp& v) {
+    _Tp& get_or(_Tp& v) {
         if(unset) return v;
         return val;
     }

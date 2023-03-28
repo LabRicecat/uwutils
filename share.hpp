@@ -7,7 +7,7 @@ namespace uwutils {
 
 // class where every copy can access the main stored data
 template<CopyAble _Tp>
-class Share {
+class Share : IContainer<_Tp> {
     Keeper<_Tp> keeper;
 public:
     Share() = delete;
@@ -34,6 +34,7 @@ public:
         return *this;
     }
 
+    const _Tp& view() const override { return keeper.unwrap(); }
     _Tp& unwrap() { return keeper.unwrap(); }
     const _Tp& unwrap() const { return keeper.unwrap(); }
 };

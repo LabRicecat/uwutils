@@ -8,7 +8,7 @@ namespace uwutils {
 
 // class that keeps it's data alive as long as one reference exists
 template<typename _Tp>
-class Keeper {
+class Keeper : IContainer<_Tp*> {
     _Tp* _p = nullptr;
     inline static std::unordered_map<_Tp*, long long> _s;
 
@@ -73,6 +73,8 @@ public:
     const _Tp& unwrap() const {
         return *_p;
     }
+
+    virtual _Tp* const& view() uwunsafe const override { return _p; }
 };
 
 

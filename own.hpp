@@ -53,7 +53,7 @@ public:
 
     operator const _Tp&() { return source; }
 
-    _Tp& ref() {
+    _Tp& ref() uwunsafe {
         if(assignable) return source;
         throw MessageException("Reference request to unowned object");
     }
@@ -61,7 +61,8 @@ public:
     const _Tp& view() { return source; }
 
     Borrow<_Tp> borrow() {
-        return Borrow<_Tp>(source);
+        if(assignable) return Borrow<_Tp>(source);
+        throw MessageException("Borrow request to unowned object");
     }
 };
 

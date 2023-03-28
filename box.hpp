@@ -2,12 +2,13 @@
 #define UWUTILS_BOX_HPP
 
 #include "dynamic.hpp"
+#include "interface.hpp"
 
 namespace uwutils {
 
 // class to add a "NULL" option to it's value
 template<typename _Tp>
-class Box {
+class Box : public IMutContainer<_Tp> {
     Dynamic dyn;
     bool has_dyn = false;
 public:
@@ -30,6 +31,17 @@ public:
         has_dyn = true;
     }
 
+    template<Not<_Tp> _Tpr>
+    Box<_Tp>& operator=(const _Tpr& t) requires AssignAble_w<_Tp,_Tpr> {
+        if(!has()) {
+            clear();
+            dyn = t;
+        }
+        else dyn.as<_Tp>() = t;
+        has_dyn = true;
+        return *this;
+    }
+
     Box<_Tp>& operator=(const _Tp& t) {
         clear();
         dyn = t;
@@ -39,7 +51,6 @@ public:
 
     template<Not<_Tp> _Tpr>
     Box<_Tp>& operator=(const Box<_Tp>& b) {
-        std::cout << "bxcpy\n";
         clear();
         if(b.has()) {
             dyn = b.dyn.copy<_Tp>();
@@ -59,13 +70,13 @@ public:
         has_dyn = false;
     }
 
-    _Tp& unwrap() {
+    const _Tp& view() const override { return dyn.as<_Tp>(); }
+    _Tp& unwrap() override {
         return dyn.as<_Tp>();
     }
 
-    operator _Tp&() {
-        return dyn.as<_Tp>();
-    }
+    operator _Tp&() override { return dyn.as<_Tp>(); }
+    operator const _Tp() const override { return dyn.as<_Tp>(); }
 };
 
 }

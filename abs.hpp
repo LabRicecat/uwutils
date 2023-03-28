@@ -2,13 +2,14 @@
 #define UWUTILS_ABS_HPP
 
 #include "concepts.hpp"
+#include "interface.hpp"
 
 namespace uwutils {
 
 // class to hold an value and guarantee to not change it
 template<typename _Tp>
-class Abs {
-    const _Tp data;
+class Abs : public IContainer<_Tp> {
+    _Tp data;
 public:
     Abs() = delete;
     Abs(Abs&&) = delete;
@@ -21,8 +22,11 @@ public:
     Abs& operator=(const Abs&) = delete;
     Abs& operator=(_Tp) = delete;
 
-    operator const _Tp&() { return data; }
-    const _Tp& unwrap() { return data; }
+    template<ConvertableTo<_Tp> _Tpr>
+    operator const _Tpr() const { return data; }
+    template<ConvertableTo<_Tp> _Tpr>
+    operator const _Tpr&() { return data; }
+    const _Tp& view() const override { return data; }
 };
 
 }

@@ -4,6 +4,7 @@
 #include "concepts.hpp"
 #include "throw.hpp"
 #include "box.hpp"
+#include "interface.hpp"
 
 namespace uwutils {
 
@@ -16,7 +17,7 @@ public:
 
 // error return wrapper class
 template<typename _Tp, ErrorEnum _Terr>
-class Error {
+class Error : IContainer<_Terr> {
     Box<_Tp> val;
     mutable _Terr err;
 public:
@@ -41,6 +42,8 @@ public:
     operator _Terr() const {
         return err;
     }
+
+    const _Terr& view() const override { return err; }
 };
 
 enum class Status { OK, ERR };

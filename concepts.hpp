@@ -4,6 +4,8 @@
 #include <concepts>
 #include <typeinfo>
 
+#define uwunsafe
+
 namespace uwutils {
 
 template<typename _Tp>
@@ -27,6 +29,11 @@ concept AssignAble_w = requires(_Tp t, _Tpr tr) {
     t = tr;
 };
 
+template<typename _Tp, typename _Tpr>
+concept ConvertableTo = requires(_Tp t) {
+    static_cast<_Tpr>(t);
+};
+
 template<typename _Tp>
 concept CopyAble = requires(_Tp t) {
     _Tp(t);
@@ -36,7 +43,7 @@ template<typename _Tp, typename _Tpr>
 concept ThisType = std::is_same<_Tp,_Tpr>::value;
 
 template<typename _Tp, typename _Tpr>
-concept Not = std::negation<std::is_same<_Tp,_Tpr>>::value;
+concept Not = std::negation<std::is_same<_Tp,_Tpr>>::value && std::negation<std::is_base_of<_Tp,_Tpr>>::value;
 
 template<typename _Tpr, typename _Tp1, typename _Tp2>
 concept EitherType = requires {
@@ -90,6 +97,11 @@ concept CallAble_w = requires(_Tp t, _Tpr... r) {
     t(r...);
 };
 
+template<typename _Tp, typename _Tpr, typename ..._Tpl>
+concept CallAble_wt = requires(_Tp t, _Tpl... r) {
+    { t(r...) } -> std::convertible_to<const _Tpr>;
+};
+
 template<typename _Tp>
 concept IteratAble = requires(_Tp t, int n) {
     t.begin() + n;
@@ -102,7 +114,13 @@ concept IndexAble = requires(_Tp t, int n) {
 };
 
 template<typename _Tp>
-using ElementOf = decltype(_Tp()[0]);
+concept EraseAble = requires(_Tp t, int n) {
+    t.erase(t.begin() + n);
+    t.erase(t.end() - n);
+};
+
+template<typename _Tp>
+using ElementOf = std::remove_reference_t<decltype(_Tp()[0])>;
 
 }
 

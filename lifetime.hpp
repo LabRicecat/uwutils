@@ -41,7 +41,7 @@ public:
 
 // class with a defined `Lifetime` at which end it gets deleted
 template<CopyAble _Tp>
-class Living {
+class Living : IContainer<_Tp*> {
     _Tp* data;
     bool _dead = false;
 public:
@@ -67,7 +67,7 @@ public:
         _dead = true;
     }
 
-    Living<_Tp>& revive(Lifetime& lt) {
+    Living<_Tp>& revive(Lifetime& lt) uwunsafe {
         lt._dels.push_back([&]() { delete data; data = nullptr; _dead = true; });
         _dead = false;
         return *this;
@@ -79,6 +79,8 @@ public:
         }
         return *data;
     }
+
+    virtual const _Tp*& view() const override { return data; }
 };
 
 }

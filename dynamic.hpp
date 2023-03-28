@@ -2,12 +2,13 @@
 #define UWUTILS_DYNAMIC_HPP
 
 #include "concepts.hpp"
+#include "interface.hpp"
 #include <memory>
 
 namespace uwutils {
 
 // class able to hold any value
-class Dynamic {
+class Dynamic : IContainer<void*> {
     void* _v = nullptr;
     unsigned long long _size = sizeof(char);
 public:
@@ -60,7 +61,7 @@ public:
         return *this;
     }
 
-    Dynamic& clear() {
+    Dynamic& clear() uwunsafe {
         if(_v != nullptr) {
             delete _v;
             _v = nullptr;
@@ -78,6 +79,8 @@ public:
     }
 
     bool null() const { return _v == nullptr; }
+
+    void* const& view() const override { return _v; }
 };
 
 }
