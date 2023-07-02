@@ -6,9 +6,10 @@
 
 namespace uwutils {
 
-// class that keeps it's data alive as long as one reference exists
+// class that keeps its data alive as long as one reference exists
 template<typename _Tp>
 class Keeper : IContainer<_Tp*> {
+    bool delme = true;
     _Tp* _p = nullptr;
     inline static std::unordered_map<_Tp*, long long> _s;
 
@@ -16,7 +17,7 @@ class Keeper : IContainer<_Tp*> {
         --_s[_p];
         if(_s[_p] <= 0) {
             _s.erase(_p);
-            delete _p;
+            if(delme) delete _p;
             _p = nullptr;
         }
     }
@@ -29,15 +30,22 @@ public:
         _p = p;
         add_ref();
     }
+    Keeper(_Tp* p, bool delme) {
+        _p = p;
+        add_ref();
+        this->delme = delme;
+    }
     Keeper(Keeper&& keeper) {
         if(_p == keeper._p) return;
         _p = keeper._p;
         add_ref();
+        delme = keeper.delme;
     }
     Keeper(const Keeper& keeper) {
         if(keeper._p == _p) return;
         _p = keeper._p;
         add_ref();
+        delme = keeper.delme;
     }
 
     Keeper& operator=(const Keeper& keeper) {
@@ -45,6 +53,7 @@ public:
         lose_ref();
         _p = keeper._p;
         add_ref();
+        delme = keeper.delme;
         return *this;
     }
     Keeper& operator=(Keeper&& keeper) {
@@ -52,6 +61,7 @@ public:
         lose_ref();
         _p = keeper._p;
         add_ref();
+        delme = keeper.delme;
         return *this;
     }
 

@@ -1,0 +1,10 @@
+[Main]
+
+[0.0.1]
+path_notes = "- added Nil to Box<>
+- finished fn::reduce()
+- fixed lifetimes
+- fixed bug with Share<> not working as expected
+"
+date = "2023/7/2 13:27:46"
+

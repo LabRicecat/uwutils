@@ -63,7 +63,7 @@ public:
 
     Dynamic& clear() uwunsafe {
         if(_v != nullptr) {
-            delete _v;
+            free(_v);
             _v = nullptr;
         }
         return *this;

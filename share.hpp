@@ -16,8 +16,11 @@ public:
     Share(const _Tp& c) 
     : keeper(new _Tp(c)) {}
     template<Not<_Tp> _Tpr>
-    Share(const _Tpr& c) requires AssignAble_w<_Tp,_Tpr> 
+    Share(const _Tpr& c) requires AssignAble_w<_Tp,_Tpr> && requires { new _Tp(c); }
     :keeper(new _Tp(c)) {}
+    template<Not<_Tp> _Tpr>
+    Share(_Tp& c) 
+    :keeper(std::addressof(c),false) {}
 
     Share& operator=(const _Tp& c) {
         keeper.unwrap() = c;
@@ -25,6 +28,10 @@ public:
     }
 
     operator _Tp&() {
+        return keeper.unwrap();
+    }
+
+    operator _Tp() const {
         return keeper.unwrap();
     }
 

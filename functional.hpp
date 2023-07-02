@@ -34,13 +34,11 @@ FnRes<_Tpl> map(_Tpl l, const _Tpf& f) {
     return FnRes<_Tpl>(l);
 }
 
-// TODO lol
-template<IteratAble _Tpl, CallAble_wt<ElementOf<_Tpl>,const ElementOf<_Tpl>&> _Tpf>
-_Tpl reduce(const _Tpl& l, const _Tpf& f) {
-    _Tpl r;
-    for(const auto& _i : l) {
-        
-    }
+template<IteratAble _Tpl, CallAble_wt<const ElementOf<_Tpl>&,const ElementOf<_Tpl>&, const ElementOf<_Tpl>&> _Tpf>
+ElementOf<_Tpl> reduce(const _Tpl& l, const _Tpf& f) requires requires(_Tpl l, _Tpf f, ElementOf<_Tpl> e, int x) { e = f(e,*l.begin()); } {
+    ElementOf<_Tpl> r = *l.begin();
+    for(auto _i = l.begin()+1; _i != l.end(); ++_i)
+        r = f(r,*_i);
     return r;
 }
 
@@ -91,6 +89,10 @@ public:
     FnRes& map(const _Tpf& f) {
         *this = uwutils::fn::map(_d,f);
         return *this;
+    }
+    template<CallAble_wt<const ElementOf<_Tpl>&,const ElementOf<_Tpl>&, const ElementOf<_Tpl>&> _Tpf>
+    const ElementOf<_Tpl> reduce(const _Tpf& f) requires requires(_Tpl l, _Tpf f, ElementOf<_Tpl> e, int x) { e = f(e,l[x]); } {
+        return uwutils::fn::reduce(_d,f);
     }
     template<CallAble_wt<elemT> _Tpf>
     FnRes& oneach(const elemT& eq, const _Tpf& f) requires Eq<elemT> {

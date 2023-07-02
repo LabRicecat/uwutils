@@ -41,7 +41,7 @@ public:
 
 // class with a defined `Lifetime` at which end it gets deleted
 template<CopyAble _Tp>
-class Living : IContainer<_Tp*> {
+class Living : IContainer<const _Tp> {
     _Tp* data;
     bool _dead = false;
 public:
@@ -57,30 +57,37 @@ public:
 
     template<AssignAble_w<_Tp> _Tpr>
     Living<_Tp>& operator=(const _Tpr& t) {
-        data = new _Tpr(t);
+        if(_dead) throw MessageException("Usage of dead object");
+        if(!data) data = new _Tpr(t);
+        else *data = t;
         return *this;
     }
 
     bool dead() const { return _dead; }
 
-    void die() { 
+    void die() {
+        if(_dead) throw MessageException("Usage of dead object");
         _dead = true;
     }
 
-    Living<_Tp>& revive(Lifetime& lt) uwunsafe {
+    Living<_Tp>& revive(Lifetime& lt, const _Tp& x) uwunsafe {
         lt._dels.push_back([&]() { delete data; data = nullptr; _dead = true; });
         _dead = false;
+        data = new _Tp(x);
         return *this;
     }
 
     operator _Tp&() { 
-        if(_dead) { 
-            throw MessageException("Usage of dead object");
-        }
+        if(_dead) throw MessageException("Usage of dead object");
         return *data;
     }
 
-    virtual const _Tp*& view() const override { return data; }
+    Living& operator=(Living& r) { 
+        data = r.data;
+        return *this;
+    }
+
+    virtual const _Tp& view() uwunsafe const override { return *data; }
 };
 
 }

@@ -11,12 +11,19 @@ template<typename _Tp>
 class Box : public IMutContainer<_Tp> {
     Dynamic dyn;
     bool has_dyn = false;
+    bool nil = false;
+
+    static Box<_Tp> make_nil() {
+        Box<_Tp> b;
+        b.nil = true;
+        return b;
+    }
 public:
     bool has() const { return has_dyn; }
 
     Box(const Box<_Tp>& b) {
         if(b.has_dyn) {
-            dyn = b.dyn.copy<_Tp>();
+            dyn = b.dyn.template copy<_Tp>();
             has_dyn = true;
         } 
     }
@@ -26,6 +33,12 @@ public:
 
     template<Not<Box<_Tp>> _Tpr>
     Box(const _Tpr& t) requires Not<_Tp,_Tpr> && AssignAble_w<_Tp,_Tpr>
+    : dyn(new _Tp(t)) {
+        dyn.as<_Tp>() = t;
+        has_dyn = true;
+    }
+    template<Not<Box<_Tp>> _Tpr>
+    Box(_Tpr& t) requires Not<_Tp,_Tpr> && AssignAble_w<_Tp,_Tpr>
     : dyn(new _Tp(t)) {
         dyn.as<_Tp>() = t;
         has_dyn = true;
@@ -53,7 +66,7 @@ public:
     Box<_Tp>& operator=(const Box<_Tp>& b) {
         clear();
         if(b.has()) {
-            dyn = b.dyn.copy<_Tp>();
+            dyn = b.dyn.template copy<_Tp>();
             has_dyn = true;
         }
         return *this;
@@ -77,6 +90,12 @@ public:
 
     operator _Tp&() override { return dyn.as<_Tp>(); }
     operator const _Tp() const override { return dyn.as<_Tp>(); }
+
+    inline const static Box<_Tp> Nil = make_nil();
+
+    operator bool() const {
+        return has_dyn;
+    }
 };
 
 }

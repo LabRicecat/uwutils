@@ -2,7 +2,7 @@
 
 [Info]
 name = "uwutils"
-version = "0.0.0"
+version = "0.0.1"
 
 [Download]
 files = ["abs.hpp","borrow.hpp","box.hpp","concepts.hpp","dynamic.hpp","either.hpp","error.hpp","functional.hpp","keeper.hpp","lifetime.hpp","own.hpp","result.hpp","share.hpp","throw.hpp","interface.hpp"]
